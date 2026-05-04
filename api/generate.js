@@ -29,13 +29,20 @@ export default async function handler(req, res) {
       })
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      return res.status(500).json({
+        error: `Failed to parse API response: ${response.status} ${response.statusText}`
+      });
+    }
 
     if (!response.ok) {
-      console.error('API Error:', data);
-      const errorMessage = data.error?.message || JSON.stringify(data);
+      console.error('API Error Response:', JSON.stringify(data, null, 2));
+      const errorMessage = data.error?.message || data.message || JSON.stringify(data);
       return res.status(response.status).json({
-        error: `API Error: ${errorMessage}`
+        error: `Claude API Error (${response.status}): ${errorMessage}`
       });
     }
 
