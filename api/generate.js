@@ -29,20 +29,29 @@ export default async function handler(req, res) {
       })
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
+      console.error('API Error:', data);
+      const errorMessage = data.error?.message || JSON.stringify(data);
       return res.status(response.status).json({
-        error: errorData.error?.message || 'Error from Claude API'
+        error: `API Error: ${errorMessage}`
       });
     }
 
-    const data = await response.json();
+    if (!data.content || !data.content[0]) {
+      return res.status(500).json({
+        error: 'Invalid response format from Claude API'
+      });
+    }
+
     return res.status(200).json({
       content: data.content[0].text
     });
   } catch (error) {
+    console.error('Server Error:', error);
     return res.status(500).json({
-      error: error.message || 'Internal server error'
+      error: `Server Error: ${error.message}`
     });
   }
 }
