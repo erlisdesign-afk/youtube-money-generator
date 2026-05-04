@@ -1,0 +1,9 @@
+{
+  "name": "youtube-money-generator",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "YouTube Money Generator with AI",
+  "scripts": {
+    "dev": "echo 'Development mode'"
+  }
+}
